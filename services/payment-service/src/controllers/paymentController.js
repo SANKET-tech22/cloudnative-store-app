@@ -2,7 +2,9 @@ const { v4: uuidv4 } = require("uuid");
 
 const {
   createPayment,
-  getAllPayments
+  getAllPayments,
+  findPaymentByOrderId,
+  deletePayment
 } = require("../models/paymentModel");
 
 const {
@@ -29,6 +31,18 @@ async function addPayment(req, res) {
 
     }
 
+    const existingPayment =
+      await findPaymentByOrderId(order_id);
+
+    if (existingPayment) {
+
+      return res.status(409).json({
+        message:
+          "Payment already exists for this order"
+      });
+
+    }
+
     const payment =
       await createPayment(
         uuidv4(),
@@ -49,7 +63,6 @@ async function addPayment(req, res) {
 
   }
 }
-
 async function getPayments(req, res) {
 
   const payments =
@@ -58,7 +71,33 @@ async function getPayments(req, res) {
   res.json(payments);
 }
 
+async function removePayment(req, res) {
+  try {
+    const payment = await deletePayment(
+      req.params.id
+    );
+
+    if (!payment) {
+      return res.status(404).json({
+        message: "Payment not found"
+      });
+    }
+
+    res.json({
+      message: "Payment deleted successfully"
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Internal server error"
+    });
+  }
+}
+
 module.exports = {
   addPayment,
-  getPayments
+  getPayments,
+  removePayment
 };

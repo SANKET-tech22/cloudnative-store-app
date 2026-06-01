@@ -46,7 +46,27 @@ async function getAllPayments() {
   return result.rows;
 }
 
+async function findPaymentByOrderId(orderId) {
+  const result = await pool.query(
+    "SELECT * FROM payments WHERE order_id = $1",
+    [orderId]
+  );
+
+  return result.rows[0];
+}
+
+async function deletePayment(id) {
+  const result = await pool.query(
+    "DELETE FROM payments WHERE id = $1 RETURNING *",
+    [id]
+  );
+
+  return result.rows[0];
+}
+
 module.exports = {
   createPayment,
-  getAllPayments
+  getAllPayments,
+  findPaymentByOrderId,
+  deletePayment
 };

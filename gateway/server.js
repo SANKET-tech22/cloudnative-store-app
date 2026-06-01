@@ -1,7 +1,10 @@
 const express = require("express");
+const cors = require("cors");
 const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const app = express();
+
+app.use(cors());
 
 app.use((req, res, next) => {
   console.log("GATEWAY:", req.method, req.originalUrl);

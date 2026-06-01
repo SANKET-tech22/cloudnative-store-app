@@ -4,11 +4,14 @@ const router = express.Router();
 
 const {
   addPayment,
-  getPayments
+  getPayments,
+  removePayment
 } = require("../controllers/paymentController");
 
 router.post("/", addPayment);
 
 router.get("/", getPayments);
+
+router.delete("/:id", removePayment);
 
 module.exports = router;
