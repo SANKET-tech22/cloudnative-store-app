@@ -1,0 +1,107 @@
+services:
+
+  postgres-db:
+    image: postgres:16
+    container_name: postgres-db
+    restart: always
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: cloudnative_store
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  auth-service:
+    image: auth-service:v1
+    container_name: auth-service
+
+    depends_on:
+      - postgres-db
+
+    environment:
+      PORT: 5000
+      JWT_SECRET: supersecretjwtkey
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: cloudnative_store
+
+    ports:
+      - "5000:5000"
+
+  product-service:
+    image: product-service:v1
+    container_name: product-service
+
+    depends_on:
+      - postgres-db
+
+    environment:
+      PORT: 5001
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: cloudnative_store
+
+    ports:
+      - "5001:5001"
+
+  order-service:
+    image: order-service:v1
+    container_name: order-service
+
+    depends_on:
+      - postgres-db
+
+    environment:
+      PORT: 5002
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: cloudnative_store
+
+    ports:
+      - "5002:5002"
+
+  payment-service:
+    image: payment-service:v1
+    container_name: payment-service
+
+    depends_on:
+      - postgres-db
+
+    environment:
+      PORT: 5003
+      DB_HOST: postgres-db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: cloudnative_store
+
+    ports:
+      - "5003:5003"
+
+  gateway:
+    image: gateway:v1
+    container_name: gateway
+
+    depends_on:
+      - auth-service
+      - product-service
+      - order-service
+      - payment-service
+
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:

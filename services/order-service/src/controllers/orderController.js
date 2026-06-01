@@ -10,7 +10,7 @@ const {
 
 const {
   getProductById
-} = require("../models/productLookup");
+} = require("../models/orderLookup");
 
 async function addOrder(req, res) {
 

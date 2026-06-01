@@ -7,7 +7,7 @@ const {
 
 const {
   getOrderById
-} = require("../models/orderLookup");
+} = require("../models/paymentLookup");
 
 async function addPayment(req, res) {
 

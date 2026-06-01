@@ -9,7 +9,12 @@ const orderRoutes = require("./routes/orderRoutes")
 
 app.use(express.json());
 
-app.use("/api/orders", orderRoutes);
+app.use((req,res,next)=>{
+  console.log("ORDER REQUEST:", req.method, req.originalUrl);
+  next();
+});
+
+app.use("/", orderRoutes);
 
 app.get("/health", (req, res) => {
   res.json({

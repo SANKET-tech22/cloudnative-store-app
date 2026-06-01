@@ -10,7 +10,12 @@ const paymentRoutes =
 
 app.use(express.json());
 
-app.use("/api/payments", paymentRoutes);
+app.use((req,res,next)=>{
+  console.log("PAYMENT REQUEST:", req.method, req.originalUrl);
+  next();
+});
+
+app.use("/", paymentRoutes);
 
 app.get("/health", (req, res) => {
 
